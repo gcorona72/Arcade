@@ -1,3 +1,4 @@
+// src/main/java/org/example/arcade/ArcadeApplication.java
 package org.example.arcade;
 
 import org.springframework.boot.SpringApplication;
@@ -9,5 +10,4 @@ public class ArcadeApplication {
     public static void main(String[] args) {
         SpringApplication.run(ArcadeApplication.class, args);
     }
-
 }
