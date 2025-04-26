@@ -1,0 +1,87 @@
+@startuml
+' Paquetes del proyecto
+package "controller" {
+  class GameController {
+    +startGame(type: GameType, params)
+    +handleManualMove(move: Move)
+  }
+}
+package "service" {
+  interface GameService {
+    +initialize(params)
+    +solve(): Solution
+    +playManual(move: Move): boolean
+  }
+  class QueenService implements GameService {
+    -int N
+    +initialize(N)
+    +solve()
+    +playManual(move)
+  }
+  class KnightService implements GameService {
+    -Position start
+    +initialize(start, size)
+    +solve()
+    +playManual(move)
+  }
+  class HanoiService implements GameService {
+    -int disks
+    +initialize(disks)
+    +solve()
+    +playManual(move)
+  }
+}
+package "repository" {
+  interface ResultRepository {
+    +save(result: Result)
+    +findAll(): List<Result>
+  }
+  class HibernateResultRepository implements ResultRepository {
+    -SessionFactory sf
+    +save(result)
+    +findAll()
+  }
+}
+package "model" {
+  class Result {
+    -Long id
+    -GameType type
+    -Map<String,Object> params
+    -boolean success
+    -int moves
+    -LocalDateTime timestamp
+  }
+  class Move {
+    -int fromX, fromY, toX, toY
+  }
+}
+package "factory" {
+  class GameFactory {
+    +createService(type: GameType): GameService
+  }
+}
+
+enum GameType {
+  REINAS
+  KNIGHT
+  HANOI
+}
+
+' Relaciones principales
+GameController --> GameFactory : uses
+GameController --> ResultRepository : uses
+GameFactory ..> GameService
+GameService <|.. QueenService
+GameService <|.. KnightService
+GameService <|.. HanoiService
+ResultRepository <|.. HibernateResultRepository
+QueenService --> Move
+KnightService --> Move
+HanoiService --> Move
+QueenService --> Result
+KnightService --> Result
+HanoiService --> Result
+Result --> GameType
+GameFactory --> GameType
+
+@enduml

@@ -1,0 +1,19 @@
+@startuml
+start
+:Mostrar menú principal;
+:Usuario elige juego;
+if (Elección válida?) then (sí)
+  :Instanciar juego con GameFactory;
+  :Mostrar panel del juego;
+  if (Modo automático?) then (automático)
+    :Resolver puzzle automáticamente;
+  else (manual)
+    :Resolver puzzle con interacción;
+  endif
+  :Mostrar solución y feedback;
+  :Guardar resultados en BD via GameFacade;
+else (no)
+  stop
+endif
+stop
+@enduml

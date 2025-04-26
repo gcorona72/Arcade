@@ -1,0 +1,23 @@
+@startuml
+  start
+  :Inicializar tablero N×N;
+  :Fila = 1;
+  while (fila ≤ N?) is (true)
+    :Intentar colocar reina en columna;
+    if (válido?) then (sí)
+      :Colocar reina;
+      :fila++;
+    else (no)
+      if (hay más columnas?) then (sí)
+        :columna++;
+        note right: Continuamos con la siguiente columna
+      else (no)
+        :Retroceder (backtrack);
+        :fila--;
+        :mover a siguiente columna;
+      endif
+    endif
+  endwhile
+  :Solución encontrada;
+  stop
+  @enduml
