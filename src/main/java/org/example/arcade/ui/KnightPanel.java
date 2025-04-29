@@ -1,3 +1,4 @@
+// src/main/java/org/example/arcade/ui/KnightPanel.java
 package org.example.arcade.ui;
 
 import org.example.arcade.controller.GameController;
@@ -10,37 +11,26 @@ import java.awt.*;
 import java.util.HashMap;
 import java.util.Map;
 
-/**
- * Panel para el Knight’s Tour.
- */
 public class KnightPanel extends JPanel {
 
     private final GameController controller;
-    private final JTextField sizeField;
-    private final JTextField xField, yField;
-    private final JButton solveButton;
-    private final JTextArea outputArea;
+    private final JTextField sizeField = new JTextField("8", 5);
+    private final JTextField xField = new JTextField("0", 3);
+    private final JTextField yField = new JTextField("0", 3);
+    private final JButton solveButton = new JButton("Resolver");
+    private final JTextArea outputArea = new JTextArea();
 
     public KnightPanel(GameController controller) {
         this.controller = controller;
         setLayout(new BorderLayout());
 
-        JPanel input = new JPanel();
-        input.add(new JLabel("Tamaño:"));
-        sizeField = new JTextField("8", 5);
-        input.add(sizeField);
-        input.add(new JLabel("Start X:"));
-        xField = new JTextField("0", 3);
-        input.add(xField);
-        input.add(new JLabel("Start Y:"));
-        yField = new JTextField("0", 3);
-        input.add(yField);
+        JPanel top = new JPanel();
+        top.add(new JLabel("Tamaño:")); top.add(sizeField);
+        top.add(new JLabel("Start X:")); top.add(xField);
+        top.add(new JLabel("Start Y:")); top.add(yField);
+        top.add(solveButton);
+        add(top, BorderLayout.NORTH);
 
-        solveButton = new JButton("Resolver");
-        input.add(solveButton);
-        add(input, BorderLayout.NORTH);
-
-        outputArea = new JTextArea();
         outputArea.setEditable(false);
         add(new JScrollPane(outputArea), BorderLayout.CENTER);
 
@@ -48,17 +38,23 @@ public class KnightPanel extends JPanel {
     }
 
     private void onSolve() {
-        int size = Integer.parseInt(sizeField.getText().trim());
-        int x = Integer.parseInt(xField.getText().trim());
-        int y = Integer.parseInt(yField.getText().trim());
+        try {
+            int size = Integer.parseInt(sizeField.getText().trim());
+            int x = Integer.parseInt(xField.getText().trim());
+            int y = Integer.parseInt(yField.getText().trim());
 
-        Map<String, Object> params = new HashMap<>();
-        params.put("size", size);
-        params.put("start", new Position(x, y));
+            Map<String, Object> params = new HashMap<>();
+            params.put("size", size);
+            params.put("start", new Position(x, y));
 
-        Solution sol = controller.startAndSolve(GameType.KNIGHT, params);
-        outputArea.setText("Resuelto: " + sol.isSolved() +
-                "\\nMovimientos: " + sol.getMoves().size() +
-                "\\nTiempo: " + sol.getDuration().toMillis() + " ms");
+            Solution sol = controller.startAndSolve(GameType.KNIGHT, params);
+            outputArea.setText(
+                    "Resuelto: " + sol.isSolved() +
+                            "\nMovimientos: " + sol.getMoveCount() +
+                            "\nTiempo: " + sol.getDuration().toMillis() + " ms"
+            );
+        } catch (NumberFormatException ex) {
+            JOptionPane.showMessageDialog(this, "Valores inválidos", "Error", JOptionPane.ERROR_MESSAGE);
+        }
     }
 }

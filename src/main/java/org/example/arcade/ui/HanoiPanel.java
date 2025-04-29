@@ -1,3 +1,4 @@
+// src/main/java/org/example/arcade/ui/HanoiPanel.java
 package org.example.arcade.ui;
 
 import org.example.arcade.controller.GameController;
@@ -9,30 +10,22 @@ import java.awt.*;
 import java.util.HashMap;
 import java.util.Map;
 
-/**
- * Panel para las Torres de Hanói.
- */
 public class HanoiPanel extends JPanel {
 
     private final GameController controller;
-    private final JTextField disksField;
-    private final JButton solveButton;
-    private final JTextArea outputArea;
+    private final JTextField disksField = new JTextField("3", 5);
+    private final JButton solveButton = new JButton("Resolver");
+    private final JTextArea outputArea = new JTextArea();
 
     public HanoiPanel(GameController controller) {
         this.controller = controller;
         setLayout(new BorderLayout());
 
-        JPanel input = new JPanel();
-        input.add(new JLabel("Discos:"));
-        disksField = new JTextField("3", 5);
-        input.add(disksField);
+        JPanel top = new JPanel();
+        top.add(new JLabel("Discos:")); top.add(disksField);
+        top.add(solveButton);
+        add(top, BorderLayout.NORTH);
 
-        solveButton = new JButton("Resolver");
-        input.add(solveButton);
-        add(input, BorderLayout.NORTH);
-
-        outputArea = new JTextArea();
         outputArea.setEditable(false);
         add(new JScrollPane(outputArea), BorderLayout.CENTER);
 
@@ -40,13 +33,19 @@ public class HanoiPanel extends JPanel {
     }
 
     private void onSolve() {
-        int disks = Integer.parseInt(disksField.getText().trim());
-        Map<String, Object> params = new HashMap<>();
-        params.put("disks", disks);
+        try {
+            int d = Integer.parseInt(disksField.getText().trim());
+            Map<String, Object> params = new HashMap<>();
+            params.put("disks", d);
 
-        Solution sol = controller.startAndSolve(GameType.HANOI, params);
-        outputArea.setText("Resuelto: " + sol.isSolved() +
-                "\\nMovimientos: " + sol.getMoves().size() +
-                "\\nTiempo: " + sol.getDuration().toMillis() + " ms");
+            Solution sol = controller.startAndSolve(GameType.HANOI, params);
+            outputArea.setText(
+                    "Resuelto: " + sol.isSolved() +
+                            "\nMovimientos: " + sol.getMoveCount() +
+                            "\nTiempo: " + sol.getDuration().toMillis() + " ms"
+            );
+        } catch (NumberFormatException ex) {
+            JOptionPane.showMessageDialog(this, "Introduce un número válido de discos", "Error", JOptionPane.ERROR_MESSAGE);
+        }
     }
 }

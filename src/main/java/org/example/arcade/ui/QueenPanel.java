@@ -1,3 +1,4 @@
+// src/main/java/org/example/arcade/ui/QueenPanel.java
 package org.example.arcade.ui;
 
 import org.example.arcade.controller.GameController;
@@ -9,29 +10,23 @@ import java.awt.*;
 import java.util.HashMap;
 import java.util.Map;
 
-/**
- * Panel para el juego de las N Reinas.
- */
 public class QueenPanel extends JPanel {
 
     private final GameController controller;
-    private final JTextField nField;
-    private final JButton solveButton;
-    private final JTextArea outputArea;
+    private final JTextField nField = new JTextField("8", 5);
+    private final JButton solveButton = new JButton("Resolver");
+    private final JTextArea outputArea = new JTextArea();
 
     public QueenPanel(GameController controller) {
         this.controller = controller;
         setLayout(new BorderLayout());
 
-        JPanel inputPanel = new JPanel();
-        inputPanel.add(new JLabel("Valor de N:"));
-        nField = new JTextField("8", 5);
-        inputPanel.add(nField);
-        solveButton = new JButton("Resolver");
-        inputPanel.add(solveButton);
-        add(inputPanel, BorderLayout.NORTH);
+        JPanel top = new JPanel();
+        top.add(new JLabel("Valor de N:"));
+        top.add(nField);
+        top.add(solveButton);
+        add(top, BorderLayout.NORTH);
 
-        outputArea = new JTextArea();
         outputArea.setEditable(false);
         add(new JScrollPane(outputArea), BorderLayout.CENTER);
 
@@ -39,13 +34,19 @@ public class QueenPanel extends JPanel {
     }
 
     private void onSolve() {
-        int N = Integer.parseInt(nField.getText().trim());
-        Map<String, Object> params = new HashMap<>();
-        params.put("N", N);
+        try {
+            int N = Integer.parseInt(nField.getText().trim());
+            Map<String, Object> params = new HashMap<>();
+            params.put("N", N);
 
-        Solution sol = controller.startAndSolve(GameType.REINAS, params);
-        outputArea.setText("Resuelto: " + sol.isSolved() +
-                "\\nMovimientos: " + sol.getMoves().size() +
-                "\\nTiempo: " + sol.getDuration().toMillis() + " ms");
+            Solution sol = controller.startAndSolve(GameType.REINAS, params);
+            outputArea.setText(
+                    "Resuelto: " + sol.isSolved() +
+                            "\nMovimientos: " + sol.getMoveCount() +
+                            "\nTiempo: " + sol.getDuration().toMillis() + " ms"
+            );
+        } catch (NumberFormatException ex) {
+            JOptionPane.showMessageDialog(this, "Introduce un número válido para N", "Error", JOptionPane.ERROR_MESSAGE);
+        }
     }
 }

@@ -62,13 +62,20 @@
             <artifactId>h2</artifactId>
             <scope>runtime</scope>
         </dependency>
-
-        <!-- Test -->
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-test</artifactId>
             <scope>test</scope>
+            <!-- Excluimos Vintage si no usamos JUnit 4 -->
+            <exclusions>
+                <exclusion>
+                    <groupId>org.junit.vintage</groupId>
+                    <artifactId>junit-vintage-engine</artifactId>
+                </exclusion>
+            </exclusions>
         </dependency>
+
+        <!-- pom.xml -->
     </dependencies>
 
     <build>
