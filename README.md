@@ -30,7 +30,7 @@ Incorpora diseño por capas (Spring Boot MVC + JPA + H2) y frontend Swing con es
 ---
 
 ## Arquitectura del Sistema
-```mermaid
+
 flowchart LR
   subgraph UI [Swing Frontend]
     A[CoverPanel: Portal de Juegos]
@@ -43,7 +43,6 @@ flowchart LR
   E --> F[GameFacade] --> G[GameFactory] --> H[GameService< >]
   E --> I[ResultRepository (JPA)]
   I --> J[H2 Database]
-```
 
 ---
 
