@@ -10,31 +10,38 @@ import javax.swing.*;
 import java.awt.*;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.function.Consumer;
 
 public class KnightPanel extends JPanel {
 
     private final GameController controller;
+    private final Consumer<Void> onBack;
     private final JTextField sizeField = new JTextField("8", 5);
     private final JTextField xField = new JTextField("0", 3);
     private final JTextField yField = new JTextField("0", 3);
     private final JButton solveButton = new JButton("Resolver");
     private final JTextArea outputArea = new JTextArea();
 
-    public KnightPanel(GameController controller) {
+    public KnightPanel(GameController controller, Runnable backAction) {
         this.controller = controller;
+        this.onBack = v -> backAction.run();
         setLayout(new BorderLayout());
-
-        JPanel top = new JPanel();
-        top.add(new JLabel("Tamaño:")); top.add(sizeField);
-        top.add(new JLabel("Start X:")); top.add(xField);
-        top.add(new JLabel("Start Y:")); top.add(yField);
-        top.add(solveButton);
-        add(top, BorderLayout.NORTH);
-
+        add(createTopBar(), BorderLayout.NORTH);
         outputArea.setEditable(false);
         add(new JScrollPane(outputArea), BorderLayout.CENTER);
-
         solveButton.addActionListener(e -> onSolve());
+    }
+
+    private JPanel createTopBar() {
+        JPanel topBar = new JPanel(new FlowLayout(FlowLayout.LEFT));
+        JButton back = new JButton("◀ Volver");
+        back.addActionListener(e -> onBack.accept(null));
+        topBar.add(back);
+        topBar.add(new JLabel("Tamaño:")); topBar.add(sizeField);
+        topBar.add(new JLabel("Start X:")); topBar.add(xField);
+        topBar.add(new JLabel("Start Y:")); topBar.add(yField);
+        topBar.add(solveButton);
+        return topBar;
     }
 
     private void onSolve() {
