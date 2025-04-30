@@ -6,6 +6,7 @@ import org.example.arcade.model.GameType;
 
 import javax.swing.*;
 import java.awt.*;
+import java.awt.event.ActionEvent;
 
 public class MainWindow extends JFrame {
 
@@ -17,44 +18,25 @@ public class MainWindow extends JFrame {
         setDefaultCloseOperation(EXIT_ON_CLOSE);
         setSize(800, 600);
         setLocationRelativeTo(null);
-        initMenu();
+        showCoverMenu();
     }
 
-    private void initMenu() {
-        JMenuBar menuBar = new JMenuBar();
-        JMenu menu = new JMenu("Juegos");
-
-        JMenuItem reinasItem = new JMenuItem("N Reinas");
-        reinasItem.addActionListener(e -> openPanel(GameType.REINAS));
-
-        JMenuItem knightItem = new JMenuItem("Knight’s Tour");
-        knightItem.addActionListener(e -> openPanel(GameType.KNIGHT));
-
-        JMenuItem hanoiItem = new JMenuItem("Torres de Hanói");
-        hanoiItem.addActionListener(e -> openPanel(GameType.HANOI));
-
-        JMenuItem historyItem = new JMenuItem("Historial");
-        historyItem.addActionListener(e -> new ResultHistoryDialog(this, controller).setVisible(true));
-
-        menu.add(reinasItem);
-        menu.add(knightItem);
-        menu.add(hanoiItem);
-        menu.addSeparator();
-        menu.add(historyItem);
-        menuBar.add(menu);
-
-        setJMenuBar(menuBar);
-    }
-
-    private void openPanel(GameType type) {
+    void showCoverMenu() {
         getContentPane().removeAll();
+        getContentPane().add(new CoverPanel(this::handleSelection));
+        revalidate();
+        repaint();
+    }
+
+    private void handleSelection(ActionEvent e) {
+        getContentPane().removeAll();
+        GameType type = GameType.valueOf(e.getActionCommand());
         switch (type) {
-            case REINAS  -> getContentPane().add(new QueenPanel(controller));
-            case KNIGHT -> getContentPane().add(new KnightPanel(controller));
-            case HANOI  -> getContentPane().add(new HanoiPanel(controller));
+            case REINAS  -> getContentPane().add(new QueenPanel(controller, this::showCoverMenu));
+            case KNIGHT  -> getContentPane().add(new KnightPanel(controller, this::showCoverMenu));
+            case HANOI   -> getContentPane().add(new HanoiPanel(controller, this::showCoverMenu));
         }
-        // Fuerza el layout y repintado
-        getContentPane().revalidate();
-        getContentPane().repaint();
+        revalidate();
+        repaint();
     }
 }

@@ -9,27 +9,34 @@ import javax.swing.*;
 import java.awt.*;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.function.Consumer;
 
 public class HanoiPanel extends JPanel {
 
     private final GameController controller;
+    private final Consumer<Void> onBack;
     private final JTextField disksField = new JTextField("3", 5);
     private final JButton solveButton = new JButton("Resolver");
     private final JTextArea outputArea = new JTextArea();
 
-    public HanoiPanel(GameController controller) {
+    public HanoiPanel(GameController controller, Runnable backAction) {
         this.controller = controller;
+        this.onBack = v -> backAction.run();
         setLayout(new BorderLayout());
-
-        JPanel top = new JPanel();
-        top.add(new JLabel("Discos:")); top.add(disksField);
-        top.add(solveButton);
-        add(top, BorderLayout.NORTH);
-
+        add(createTopBar(), BorderLayout.NORTH);
         outputArea.setEditable(false);
         add(new JScrollPane(outputArea), BorderLayout.CENTER);
-
         solveButton.addActionListener(e -> onSolve());
+    }
+
+    private JPanel createTopBar() {
+        JPanel topBar = new JPanel(new FlowLayout(FlowLayout.LEFT));
+        JButton back = new JButton("◀ Volver");
+        back.addActionListener(e -> onBack.accept(null));
+        topBar.add(back);
+        topBar.add(new JLabel("Discos:")); topBar.add(disksField);
+        topBar.add(solveButton);
+        return topBar;
     }
 
     private void onSolve() {
